@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <!-- Faz o site se adaptar bem em celular -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Loja Virtual Pro - Aula 3</title>
+
+  <style>
+    /* =========================================================
+       RESET BÁSICO
+       =========================================================
+       Aqui removemos margens e paddings padrão do navegador.
+       Isso ajuda a deixar o layout previsível e mais profissional.
+    ========================================================= */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* =========================================================
+       VARIÁVEIS DE CORES (CUSTOM PROPERTIES)
+       =========================================================
+       Essas variáveis facilitam MUITO a manutenção.
+       Em vez de repetir a cor em vários lugares, usamos nomes.
+       Se quiser mudar o tema depois, fica muito mais fácil.
+    ========================================================= */
+    :root {
+      --bg-main: #0f172a;
+      /* fundo principal escuro (azul profundo) */
+      --bg-secondary: #1e293b;
+      /* fundo secundário para cards e seções */
+      --bg-card: rgba(30, 41, 59, 0.75);
+      /* card com leve transparência */
+      --text-main: #f8fafc;
+      /* texto principal claro */
+      --text-soft: #cbd5e1;
+      /* texto secundário mais suave */
+      --primary: #3b82f6;
+      /* azul vibrante */
+      --secondary: #8b5cf6;
+      /* roxo vibrante */
+      --accent: #06b6d4;
+      /* ciano para detalhes */
+      --success: #10b981;
+      /* verde de sucesso */
+      --danger: #ef4444;
+      /* vermelho de remover/erro */
+      --warning: #f59e0b;
+      /* amarelo para destaques */
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      --radius-xl: 24px;
+      /* borda bem arredondada */
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --transition: all 0.3s ease;
+    }
+
+    /* =========================================================
+       BODY
+       =========================================================
+       Fundo com gradiente = esse efeito bonito azul -> roxo
+       que você comentou. Sim, isso é um GRADIENTE 😌
+    ========================================================= */
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1d4ed8, #6d28d9);
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* =========================================================
+       CONTAINER GLOBAL
+       =========================================================
+       Limita a largura do conteúdo e centraliza tudo.
+       Isso é MUITO comum em sites profissionais.
+    ========================================================= */
+    .container {
+      width: 90%;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    /* =========================================================
+       HEADER / TOPO
+       =========================================================
+       Menu fixo com efeito glassmorphism (vidro fosco).
+       "position: sticky" faz o topo acompanhar a rolagem.
+    ========================================================= */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(12px);
+      background: rgba(15, 23, 42, 0.75);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    /* =========================================================
+       LOGO
+       =========================================================
+       Gradiente no texto usando background-clip.
+       É um truque visual muito usado pra dar cara premium.
+    ========================================================= */
+    .logo {
+      font-size: 1.9rem;
+      font-weight: bold;
+      background: linear-gradient(90deg, #60a5fa, #22d3ee, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* =========================================================
+       MENU DE NAVEGAÇÃO
+       ========================================================= */
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: bold;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    nav a:hover {
+      color: #93c5fd;
+    }
+
+    /* Linha animada embaixo do link ao passar o mouse */
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -5px;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transition: width 0.3s ease;
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    /* =========================================================
+       BOTÃO DO CARRINHO NO TOPO
+       =========================================================
+       O badge vermelho mostra quantos itens existem no carrinho.
+    ========================================================= */
+    .cart-button {
+      position: relative;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .cart-button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--danger);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: bold;
+      border: 2px solid white;
+    }
+
+    /* =========================================================
+       HERO / BANNER PRINCIPAL
+       =========================================================
+       Esse banner tem:
+       - layout em duas colunas
+       - texto à esquerda
+       - imagem decorativa à direita
+       - fundo com transparência
+       - bordas arredondadas
+       - sombra
+       
+       "display: grid" aqui facilita alinhar dois blocos lado a lado.
+    ========================================================= */
+    .hero {
+      margin: 35px auto;
+      padding: 40px;
+      border-radius: var(--radius-xl);
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 30px;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Brilho decorativo no banner */
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.35), transparent 70%);
+      top: -80px;
+      right: -60px;
+      pointer-events: none;
+    }
+
+    .hero-text h1 {
+      font-size: 2.7rem;
+      margin-bottom: 15px;
+      line-height: 1.15;
+    }
+
+    .hero-text p {
+      color: var(--text-soft);
+      margin-bottom: 22px;
+      font-size: 1.05rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Botões reutilizáveis */
+    .btn {
+      border: none;
+      padding: 14px 22px;
+      border-radius: 999px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    /* =========================================================
+       "IMAGEM" DO BANNER
+       =========================================================
+       Como estamos em um arquivo simples, criamos uma área visual
+       estilizada ao invés de depender de imagem externa.
+       
+       Esse bloco simula um destaque visual moderno.
+    ========================================================= */
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-card {
+      width: 100%;
+      max-width: 360px;
+      min-height: 280px;
+      border-radius: 30px;
+      background: linear-gradient(145deg, rgba(59, 130, 246, 0.25), rgba(139, 92, 246, 0.25));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(8px);
+      transform: rotate(-2deg);
+    }
+
+    .hero-badge {
+      align-self: flex-start;
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .hero-product {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 20px;
+    }
+
+    .hero-product h3 {
+      margin-bottom: 8px;
+    }
+
+    .hero-product p {
+      color: var(--text-soft);
+      font-size: 0.95rem;
+    }
+
+    .hero-price {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #93c5fd;
+      margin-top: 15px;
+    }
+
+    /* =========================================================
+       SEÇÃO DE FORMULÁRIO DE CADASTRO
+       =========================================================
+       Aqui o usuário adiciona produtos à vitrine.
+    ========================================================= */
+    .section-title {
+      margin: 40px 0 18px;
+      font-size: 1.8rem;
+    }
+
+    .form-section {
+      background: rgba(15, 23, 42, 0.72);
+      border-radius: var(--radius-xl);
+      padding: 25px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    /* =========================================================
+       FORMULÁRIO EM GRID
+       =========================================================
+       Usamos grid para organizar inputs de forma elegante.
+       Ele quebra automaticamente em telas menores.
+    ========================================================= */
+    .product-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-group label {
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .input-group input,
+    .input-group textarea,
+    .input-group select {
+      padding: 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.06);
+      color: white;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .input-group input:focus,
+    .input-group textarea:focus,
+    .input-group select:focus {
+      border-color: rgba(96, 165, 250, 0.8);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18);
+    }
+
+    .input-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Corrige aparência do texto das opções do select */
+    option {
+      color: black;
+    }
+
+    .form-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* =========================================================
+       FILTROS
+       =========================================================
+       Barra de busca + filtro por categoria.
+       Isso já dá cara de loja mais real.
+    ========================================================= */
+    .filters {
+      margin: 30px 0 20px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 15px;
+    }
+
+    /* =========================================================
+       ÁREA PRINCIPAL DA LOJA
+       =========================================================
+       Aqui dividimos em:
+       - vitrine de produtos (esquerda)
+       - carrinho lateral (direita)
+    ========================================================= */
+    .shop-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 25px;
+      margin-bottom: 50px;
+    }
+
+    /* =========================================================
+       GRID DE PRODUTOS
+       =========================================================
+       Cada card se ajusta automaticamente.
+       "minmax(250px, 1fr)" significa:
+       - mínimo de 250px
+       - máximo ocupando espaço disponível
+    ========================================================= */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    /* =========================================================
+       CARD DE PRODUTO
+       =========================================================
+       Esse é o coração visual da loja.
+       O hover levanta levemente o card.
+    ========================================================= */
+    .product-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: fadeUp 0.5s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(96, 165, 250, 0.35);
+    }
+
+    /* =========================================================
+       IMAGEM FAKE DO PRODUTO
+       =========================================================
+       Como ainda não estamos usando upload real de imagem,
+       criamos uma "capa visual" estilizada.
+    ========================================================= */
+    .product-image {
+      height: 180px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.35), rgba(139, 92, 246, 0.35));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .product-category {
+      align-self: flex-start;
+      font-size: 0.8rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(6, 182, 212, 0.14);
+      color: #67e8f9;
+      font-weight: bold;
+    }
+
+    .product-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .product-description {
+      color: var(--text-soft);
+      font-size: 0.95rem;
+      flex-grow: 1;
+    }
+
+    .product-price {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #93c5fd;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-small {
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+    }
+
+    .btn-add-cart {
+      background: linear-gradient(135deg, var(--success), #059669);
+      color: white;
+      flex: 1;
+    }
+
+    .btn-add-cart:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.12);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    .btn-delete:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    /* =========================================================
+       CARRINHO LATERAL
+       =========================================================
+       O carrinho fica "grudado" visualmente durante a rolagem.
+       Isso melhora muito a experiência.
+    ========================================================= */
+    .cart-sidebar {
+      background: rgba(15, 23, 42, 0.72);
+      border-radius: var(--radius-xl);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 95px;
+      height: fit-content;
+    }
+
+    .cart-sidebar h3 {
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+    }
+
+    .cart-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+      max-height: 350px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    /* Estilizando a barra de rolagem (opcional, visual premium) */
+    .cart-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .cart-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+    }
+
+    .cart-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .cart-item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .cart-item-name {
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .cart-item-price {
+      color: #93c5fd;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .cart-item-remove {
+      margin-top: 8px;
+      background: transparent;
+      border: none;
+      color: #fca5a5;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .cart-empty {
+      color: var(--text-soft);
+      font-size: 0.95rem;
+      text-align: center;
+      padding: 18px 10px;
+    }
+
+    .cart-summary {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 15px;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    /* =========================================================
+       MENSAGEM DE FEEDBACK
+       =========================================================
+       Aparece quando algo é adicionado ao carrinho.
+       Fica fixa no canto da tela.
+    ========================================================= */
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: rgba(16, 185, 129, 0.95);
+      color: white;
+      padding: 14px 18px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      transform: translateY(120px);
+      opacity: 0;
+      transition: 0.4s ease;
+      z-index: 2000;
+      font-weight: bold;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* =========================================================
+       RODAPÉ
+       ========================================================= */
+    footer {
+      margin-top: 40px;
+      padding: 30px 0;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.75);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    /* =========================================================
+       ANIMAÇÃO DE ENTRADA DOS CARDS
+       ========================================================= */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* =========================================================
+       RESPONSIVIDADE
+       =========================================================
+       Aqui está uma das partes MAIS IMPORTANTES.
+       Faz o site ficar bonito no celular também.
+    ========================================================= */
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .shop-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .cart-sidebar {
+        position: static;
+      }
+
+      .filters {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero {
+        padding: 25px;
+      }
+
+      .hero-text h1 {
+        font-size: 2rem;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================================================
+       HEADER / TOPO
+       ========================================================= -->
+  <header>
+    <div class="container topbar">
+      <div class="logo">NeoShop Pro</div>
+
+      <nav>
+        <ul>
+          <li><a href="#inicio">Início</a></li>
+          <li><a href="#cadastro">Cadastrar</a></li>
+          <li><a href="#produtos">Produtos</a></li>
+          <li><a href="#carrinho">Carrinho</a></li>
+        </ul>
+      </nav>
+
+      <!-- Botão que mostra a quantidade de itens no carrinho -->
+      <button class="cart-button" onclick="scrollParaCarrinho()">
+        🛒 Carrinho
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- =========================================================
+         BANNER PRINCIPAL / HERO
+         ========================================================= -->
+    <section class="hero" id="inicio">
+      <div class="hero-text">
+        <h1>Sua loja online com visual profissional e vibe premium</h1>
+        <p>
+          Nesta aula, além de cadastrar produtos, você agora vai aprender a criar
+          uma experiência de loja mais realista, com carrinho, cards modernos,
+          animações e organização visual de verdade.
+        </p>
+
+        <div class="hero-buttons">
+          <button class="btn btn-primary"
+            onclick="document.getElementById('cadastro').scrollIntoView({ behavior: 'smooth' })">
+            Cadastrar produto
+          </button>
+
+          <button class="btn btn-secondary"
+            onclick="document.getElementById('produtos').scrollIntoView({ behavior: 'smooth' })">
+            Ver vitrine
+          </button>
+        </div>
+      </div>
+
+      <!-- Bloco visual decorativo do banner -->
+      <div class="hero-visual">
+        <div class="hero-card">
+          <span class="hero-badge">🔥 Destaque da semana</span>
+
+          <div class="hero-product">
+            <h3>Fone Gamer Neon X</h3>
+            <p>Som imersivo, design premium e visual futurista para sua loja.</p>
+            <div class="hero-price">R$ 299,90</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         FORMULÁRIO DE CADASTRO DE PRODUTO
+         ========================================================= -->
+    <h2 class="section-title" id="cadastro">Cadastrar novo produto</h2>
+
+    <section class="form-section">
+      <form id="productForm" class="product-form">
+
+        <div class="input-group">
+          <label for="nome">Nome do produto</label>
+          <input type="text" id="nome" placeholder="Ex: Teclado Mecânico RGB" />
+        </div>
+
+        <div class="input-group">
+          <label for="preco">Preço (R$)</label>
+          <input type="number" id="preco" placeholder="Ex: 249.90" step="0.01" />
+        </div>
+
+        <div class="input-group">
+          <label for="categoria">Categoria</label>
+          <select id="categoria">
+            <option value="">Selecione uma categoria</option>
+            <option value="Eletrônicos">Eletrônicos</option>
+            <option value="Moda">Moda</option>
+            <option value="Casa">Casa</option>
+            <option value="Games">Games</option>
+            <option value="Acessórios">Acessórios</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="icone">Emoji do produto</label>
+          <input type="text" id="icone" placeholder="Ex: 🎧" maxlength="2" />
+        </div>
+
+        <div class="input-group" style="grid-column: 1 / -1;">
+          <label for="descricao">Descrição</label>
+          <textarea id="descricao" placeholder="Descreva o produto..."></textarea>
+        </div>
+      </form>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="adicionarProduto()">Adicionar produto</button>
+        <button class="btn btn-secondary" onclick="limparFormulario()">Limpar campos</button>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         FILTROS DE BUSCA
+         ========================================================= -->
+    <h2 class="section-title">Buscar e filtrar produtos</h2>
+
+    <section class="filters">
+      <div class="input-group">
+        <label for="searchInput">Buscar por nome</label>
+        <input type="text" id="searchInput" placeholder="Digite o nome do produto..." oninput="renderizarProdutos()" />
+      </div>
+
+      <div class="input-group">
+        <label for="filterCategory">Filtrar por categoria</label>
+        <select id="filterCategory" onchange="renderizarProdutos()">
+          <option value="">Todas as categorias</option>
+          <option value="Eletrônicos">Eletrônicos</option>
+          <option value="Moda">Moda</option>
+          <option value="Casa">Casa</option>
+          <option value="Games">Games</option>
+          <option value="Acessórios">Acessórios</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         LAYOUT PRINCIPAL: PRODUTOS + CARRINHO
+         ========================================================= -->
+    <section class="shop-layout">
+
+      <!-- VITRINE DE PRODUTOS -->
+      <div>
+        <h2 class="section-title" id="produtos">Vitrine de produtos</h2>
+        <div class="products-grid" id="productsGrid">
+          <!-- Os produtos serão inseridos aqui via JavaScript -->
+        </div>
+      </div>
+
+      <!-- CARRINHO LATERAL -->
+      <aside class="cart-sidebar" id="carrinho">
+        <h3>🛒 Seu carrinho</h3>
+
+        <div class="cart-list" id="cartList">
+          <!-- Itens do carrinho aparecem aqui -->
+        </div>
+
+        <div class="cart-summary">
+          <div class="cart-total">
+            <span>Total:</span>
+            <span id="cartTotal">R$ 0,00</span>
+          </div>
+
+          <button class="btn btn-primary" style="width: 100%;" onclick="finalizarCompra()">
+            Finalizar compra
+          </button>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <!-- RODAPÉ -->
+  <footer>
+    <div class="container">
+      <p>NeoShop Pro • Aula 3 Profissional • Feito para aprender HTML, CSS e JavaScript na prática 🚀</p>
+    </div>
+  </footer>
+
+  <!-- Mensagem visual de feedback -->
+  <div class="toast" id="toast">Produto adicionado ao carrinho!</div>
+
+  <script>
+    /* =========================================================
+       BANCO DE DADOS TEMPORÁRIO EM MEMÓRIA
+       =========================================================
+       Aqui criamos arrays (listas) para armazenar:
+       - produtos cadastrados
+       - itens do carrinho
+       
+       Como ainda não estamos usando backend nem localStorage,
+       esses dados somem ao recarregar a página.
+    ========================================================= */
+    let produtos = [
+      {
+        id: 1,
+        nome: "Headset Gamer Neon",
+        preco: 299.90,
+        categoria: "Games",
+        descricao: "Áudio imersivo, microfone ajustável e design futurista.",
+        icone: "🎧"
+      },
+      {
+        id: 2,
+        nome: "Smartwatch Pulse X",
+        preco: 459.90,
+        categoria: "Eletrônicos",
+        descricao: "Estilo moderno com monitoramento inteligente.",
+        icone: "⌚"
+      },
+      {
+        id: 3,
+        nome: "Mochila Urban Tech",
+        preco: 189.90,
+        categoria: "Acessórios",
+        descricao: "Compacta, resistente e perfeita para o dia a dia.",
+        icone: "🎒"
+      }
+    ];
+
+    let carrinho = [];
+
+    /* =========================================================
+       GERADOR DE ID
+       =========================================================
+       Essa variável começa em 4 porque já temos 3 produtos.
+       Cada novo produto ganha um ID único.
+    ========================================================= */
+    let proximoId = 4;
+
+    /* =========================================================
+       FUNÇÃO: FORMATAR PREÇO
+       =========================================================
+       Essa função transforma números em formato brasileiro:
+       Exemplo: 299.9 -> R$ 299,90
+       
+       "toLocaleString" é MUITO útil pra dinheiro.
+    ========================================================= */
+    function formatarPreco(valor) {
+      return valor.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    /* =========================================================
+       FUNÇÃO: ADICIONAR PRODUTO
+       =========================================================
+       Pega os valores dos inputs, valida e adiciona na lista.
+    ========================================================= */
+    function adicionarProduto() {
+      const nome = document.getElementById("nome").value.trim();
+      const preco = parseFloat(document.getElementById("preco").value);
+      const categoria = document.getElementById("categoria").value;
+      const descricao = document.getElementById("descricao").value.trim();
+      const icone = document.getElementById("icone").value.trim() || "🛍️";
+
+      /* =====================================================
+         VALIDAÇÕES
+         =====================================================
+         Aqui garantimos que os campos obrigatórios foram preenchidos.
+         Isso evita produtos quebrados ou incompletos.
+      ===================================================== */
+      if (!nome) {
+        alert("Digite o nome do produto.");
+        return;
+      }
+
+      if (isNaN(preco) || preco <= 0) {
+        alert("Digite um preço válido maior que zero.");
+        return;
+      }
+
+      if (!categoria) {
+        alert("Selecione uma categoria.");
+        return;
+      }
+
+      if (!descricao) {
+        alert("Digite uma descrição.");
+        return;
+      }
+
+      /* =====================================================
+         CRIAÇÃO DO OBJETO PRODUTO
+         =====================================================
+         Estamos montando um objeto JavaScript com várias propriedades.
+      ===================================================== */
+      const novoProduto = {
+        id: proximoId++,
+        nome,
+        preco,
+        categoria,
+        descricao,
+        icone
+      };
+
+      /* Adiciona no array de produtos */
+      produtos.push(novoProduto);
+
+      /* Atualiza a tela */
+      renderizarProdutos();
+
+      /* Limpa o formulário para facilitar o próximo cadastro */
+      limparFormulario();
+
+      alert("Produto cadastrado com sucesso!");
+    }
+
+    /* =========================================================
+       FUNÇÃO: LIMPAR FORMULÁRIO
+       ========================================================= */
+    function limparFormulario() {
+      document.getElementById("nome").value = "";
+      document.getElementById("preco").value = "";
+      document.getElementById("categoria").value = "";
+      document.getElementById("descricao").value = "";
+      document.getElementById("icone").value = "";
+    }
+
+    /* =========================================================
+       FUNÇÃO: RENDERIZAR PRODUTOS
+       =========================================================
+       "Renderizar" = desenhar na tela.
+       
+       Aqui pegamos os produtos do array e transformamos em HTML.
+       Isso é uma das bases da lógica de interfaces dinâmicas.
+    ========================================================= */
+    function renderizarProdutos() {
+      const productsGrid = document.getElementById("productsGrid");
+      const busca = document.getElementById("searchInput").value.toLowerCase();
+      const categoriaFiltro = document.getElementById("filterCategory").value;
+
+      /* =====================================================
+         FILTRAGEM
+         =====================================================
+         Aqui filtramos os produtos conforme:
+         - nome digitado na busca
+         - categoria selecionada
+      ===================================================== */
+      const produtosFiltrados = produtos.filter(produto => {
+        const combinaBusca = produto.nome.toLowerCase().includes(busca);
+        const combinaCategoria = categoriaFiltro === "" || produto.categoria === categoriaFiltro;
+        return combinaBusca && combinaCategoria;
+      });
+
+      /* Limpamos a grade antes de recriar */
+      productsGrid.innerHTML = "";
+
+      /* Se não houver produtos, mostramos uma mensagem */
+      if (produtosFiltrados.length === 0) {
+        productsGrid.innerHTML = `
+          <div class="product-card" style="grid-column: 1 / -1; text-align: center;">
+            <h3>Nenhum produto encontrado</h3>
+            <p class="product-description">Tente mudar a busca ou o filtro.</p>
+          </div>
+        `;
+        return;
+      }
+
+      /* =====================================================
+         LOOP DE CRIAÇÃO DOS CARDS
+         =====================================================
+         Para cada produto, criamos um card.
+      ===================================================== */
+      produtosFiltrados.forEach(produto => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+
+        /* ===================================================
+           innerHTML
+           ===================================================
+           Aqui estamos inserindo uma estrutura HTML completa
+           dentro do card usando template string (crase ` `).
+        =================================================== */
+        card.innerHTML = `
+          <div class="product-image">${produto.icone}</div>
+          <span class="product-category">${produto.categoria}</span>
+          <h3 class="product-name">${produto.nome}</h3>
+          <p class="product-description">${produto.descricao}</p>
+          <div class="product-price">${formatarPreco(produto.preco)}</div>
+
+          <div class="product-actions">
+            <button class="btn-small btn-add-cart" onclick="adicionarAoCarrinho(${produto.id})">
+              Adicionar ao carrinho
+            </button>
+
+            <button class="btn-small btn-delete" onclick="removerProduto(${produto.id})">
+              Excluir
+            </button>
+          </div>
+        `;
+
+        productsGrid.appendChild(card);
+      });
+    }
+
+    /* =========================================================
+       FUNÇÃO: REMOVER PRODUTO
+       =========================================================
+       Remove o produto da vitrine.
+       
+       "filter" cria um novo array sem o item removido.
+    ========================================================= */
+    function removerProduto(id) {
+      const confirmar = confirm("Tem certeza que deseja excluir este produto?");
+      if (!confirmar) return;
+
+      produtos = produtos.filter(produto => produto.id !== id);
+
+      /* Também removemos do carrinho se existir */
+      carrinho = carrinho.filter(item => item.id !== id);
+
+      renderizarProdutos();
+      renderizarCarrinho();
+    }
+
+    /* =========================================================
+       FUNÇÃO: ADICIONAR AO CARRINHO
+       =========================================================
+       Procura o produto pelo ID e adiciona no carrinho.
+       
+       Aqui estamos permitindo itens repetidos no carrinho,
+       como acontece em várias lojas.
+    ========================================================= */
+    function adicionarAoCarrinho(id) {
+      const produto = produtos.find(produto => produto.id === id);
+
+      if (!produto) return;
+
+      carrinho.push(produto);
+
+      renderizarCarrinho();
+      mostrarToast(`${produto.nome} foi adicionado ao carrinho!`);
+    }
+
+    /* =========================================================
+       FUNÇÃO: REMOVER ITEM DO CARRINHO
+       =========================================================
+       "splice" remove um item específico pelo índice.
+       
+       Usamos o índice porque pode haver produtos repetidos
+       no carrinho. Se usássemos o ID, removeria todos iguais.
+    ========================================================= */
+    function removerDoCarrinho(index) {
+      carrinho.splice(index, 1);
+      renderizarCarrinho();
+    }
+
+    /* =========================================================
+       FUNÇÃO: RENDERIZAR CARRINHO
+       =========================================================
+       Atualiza:
+       - lista visual de itens
+       - total
+       - contador do topo
+    ========================================================= */
+    function renderizarCarrinho() {
+      const cartList = document.getElementById("cartList");
+      const cartTotal = document.getElementById("cartTotal");
+      const cartCount = document.getElementById("cartCount");
+
+      cartList.innerHTML = "";
+
+      if (carrinho.length === 0) {
+        cartList.innerHTML = `<div class="cart-empty">Seu carrinho está vazio.</div>`;
+      } else {
+        carrinho.forEach((item, index) => {
+          const cartItem = document.createElement("div");
+          cartItem.className = "cart-item";
+
+          cartItem.innerHTML = `
+            <div class="cart-item-top">
+              <span class="cart-item-name">${item.icone} ${item.nome}</span>
+              <span class="cart-item-price">${formatarPreco(item.preco)}</span>
+            </div>
+
+            <button class="cart-item-remove" onclick="removerDoCarrinho(${index})">
+              Remover
+            </button>
+          `;
+
+          cartList.appendChild(cartItem);
+        });
+      }
+
+      /* Soma total do carrinho */
+      const total = carrinho.reduce((soma, item) => soma + item.preco, 0);
+
+      /* Atualiza total formatado */
+      cartTotal.textContent = formatarPreco(total);
+
+      /* Atualiza contador do botão do topo */
+      cartCount.textContent = carrinho.length;
+    }
+
+    /* =========================================================
+       FUNÇÃO: FINALIZAR COMPRA
+       =========================================================
+       Simulação simples.
+       Ainda não temos checkout real, então só mostramos alerta.
+    ========================================================= */
+    function finalizarCompra() {
+      if (carrinho.length === 0) {
+        alert("Seu carrinho está vazio.");
+        return;
+      }
+
+      const total = carrinho.reduce((soma, item) => soma + item.preco, 0);
+
+      alert(`Compra finalizada com sucesso!\nTotal: ${formatarPreco(total)}`);
+
+      /* Esvazia o carrinho após finalizar */
+      carrinho = [];
+      renderizarCarrinho();
+    }
+
+    /* =========================================================
+       FUNÇÃO: TOAST (mensagem visual)
+       =========================================================
+       Exibe uma notificação elegante por alguns segundos.
+    ========================================================= */
+    function mostrarToast(mensagem) {
+      const toast = document.getElementById("toast");
+      toast.textContent = mensagem;
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2500);
+    }
+
+    /* =========================================================
+       FUNÇÃO: ROLAR ATÉ O CARRINHO
+       =========================================================
+       Faz rolagem suave até a área do carrinho.
+    ========================================================= */
+    function scrollParaCarrinho() {
+      document.getElementById("carrinho").scrollIntoView({ behavior: "smooth" });
+    }
+
+    /* =========================================================
+       INICIALIZAÇÃO DA PÁGINA
+       =========================================================
+       Quando a página abre, já mostramos:
+       - produtos iniciais
+       - carrinho vazio
+    ========================================================= */
+    renderizarProdutos();
+    renderizarCarrinho();
+  </script>
+</body>
+
+</html>
