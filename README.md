@@ -1,46 +1,55 @@
 # 🛒 Marketplace Projeto
 
-Projeto desenvolvido como prática de HTML, CSS e JavaScript, simulando um marketplace com listagem de produtos.
+Aplicação web desenvolvida com HTML, CSS e JavaScript que simula um marketplace com listagem dinâmica de produtos.
 
 ---
 
-## 🚀 Funcionalidades
-
-- 📦 Listagem de produtos
-- 🛍️ Interface de loja
-- 🎨 Layout moderno com CSS
-- ⚡ Interações com JavaScript
-
----
-
-## 🛠️ Tecnologias utilizadas
-
-- HTML
-- CSS
-- JavaScript
-- Git
-- GitHub
-
----
-
-## 📸 Preview
-
-(Em breve prints do projeto)
-
----
-
-## 🌐 Acesse o projeto
+## 🚀 Demonstração
 
 🌐 https://marketplace-projeto.vercel.app/
 
 ---
 
-## 🎯 Objetivo
+## 📸 Preview
 
-Este projeto faz parte da minha evolução como desenvolvedor, focando em prática real e construção de portfólio.
+*(adicione prints do projeto aqui futuramente)*
 
 ---
 
-## 📌 Status
+## 🛠️ Tecnologias
 
-🚧 Em desenvolvimento
+- HTML5
+- CSS3
+- JavaScript
+- Git & GitHub
+- Vercel (deploy)
+
+---
+
+## ⚙️ Funcionalidades
+
+- 📦 Listagem de produtos
+- 🔍 Busca por nome
+- 📊 Contador de produtos
+- 💾 Armazenamento no navegador (localStorage)
+
+---
+
+## 🎯 Objetivo
+
+Projeto criado para praticar desenvolvimento front-end e simular uma aplicação real de marketplace.
+
+---
+
+## 🚧 Status
+
+Em desenvolvimento — novas funcionalidades serão adicionadas.
+
+---
+
+## 📌 Melhorias futuras
+
+- 🛒 Sistema de carrinho
+- ❤️ Favoritar produtos
+- 📱 Responsividade mobile
+- 🔎 Filtro por categoria
