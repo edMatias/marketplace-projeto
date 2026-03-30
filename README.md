@@ -31,7 +31,7 @@ Projeto desenvolvido como prática de HTML, CSS e JavaScript, simulando um marke
 
 ## 🌐 Acesse o projeto
 
-https://marketplace-projeto.vercel.app
+🌐 https://marketplace-projeto.vercel.app/
 
 ---
 
